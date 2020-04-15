@@ -30,6 +30,7 @@ attr_reader :id
     DB[:conn].execute(sql)
   end
   
+<<<<<<< HEAD
   def save
     if self.id
       self.update
@@ -47,6 +48,33 @@ attr_reader :id
   def update 
     sql = "UPDATE students SET name = ?, grade = ? WHERE id = ?"
     DB[:conn].execute(sql, self.name, self.grade, self.id)
+=======
+  def save(name, grade)
+    sql = <<-SQL
+      INSERT INTO students (name, grade)
+      VALUES (?,?)
+      SQL
+    
+    DB[:conn].execute(sql, self.name, self.grade)
+    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM students")[0][0]
+  end
+  
+  def update 
+    sql = "UPDATE students SET name = ?, grade = ? WHERE name = ?"
+    DB[:conn].execute(sql, self.name, self.grade)
+  end
+
+  def self.create(name:, grade:)
+    student = Student.new(name, grade)
+    student.save
+    student
+  end
+ 
+  def self.find_by_name(name)
+    sql = "SELECT * FROM students WHERE name = ?"
+    result = DB[:conn].execute(sql, name)[0]
+    Student.new(result[0], result[1], result[2])
+>>>>>>> 26f8bced3741af8d0d736a74266f0e22139fb276
   end
 
   def self.create(name, grade)
